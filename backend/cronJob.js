@@ -1,50 +1,67 @@
 // backend/cronJob.js
 import axios from 'axios';
-import { checkAndStoreDomains } from './services/domainService.js';
+import { checkAndStoreDomain } from './services/domainService.js';
 
-console.log('⏰ [CRON] Rozpoczynam proces aktualizacji domen...');
+console.log('🚀 [CRON] Rozpoczynam ręczne uruchomienie procesu aktualizacji...');
 
+// Funkcja główna
 async function run() {
   try {
     console.log('📥 Pobieram listę uwolnionych domen z dns.pl...');
+
     const response = await axios.get('https://www.dns.pl/deleted_domains.txt', {
-      timeout: 15000,
+      timeout: 30000,
       headers: {
-        'User-Agent': 'DomenyTracker/1.0 (kontakt@twojadomena.pl)'
-      }
+        'User-Agent': 'DomenyTracker/1.0 (kontakt@uwolnionedomenty.pl)',
+      },
+      responseType: 'text',
     });
 
-    const domains = response.data
-      .split('\n')
-      .map(domain => domain.trim())
-      .filter(domain => domain && domain.endsWith('.pl'));
+    console.log('✅ Pobrano dane. Przetwarzam...');
 
-    console.log(`✅ Pobrano ${domains.length} domen .pl`);
+    const text = response.data;
+    const lines = text.split('\n');
+
+    console.log(`📄 Plik zawiera ${lines.length} linii.`);
+
+    const domains = lines
+      .map(line => line.trim().toLowerCase())
+      .filter(line => line && line.endsWith('.pl') && line.length >= 5)
+      
+
+    console.log(`🔍 Filtr: wybrano ${domains.length} domen .pl do przetworzenia.`);
 
     if (domains.length === 0) {
-      console.log('⚠️  Brak nowych domen do przetworzenia.');
+      console.log('❌ Brak domen do przetworzenia. Sprawdź format pliku z dns.pl');
       return;
     }
 
-    console.log('🔄 Przetwarzam domeny i aktualizuję bazę...');
-    await checkAndStoreDomains(domains);
-    console.log('🎉 Aktualizacja zakończona pomyślnie!');
-  } catch (err) {
-    console.error('❌ Błąd podczas wykonywania zadania:', err.message);
+    // Aktualna data z godziną (format DATETIME dla MySQL)
+    const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
-    if (err.code) {
-      console.error('🔍 Kod błędu:', err.code);
+    // Przetwarzaj po jednej domenie (by nie obciążać DNS i bazę)
+    for (const domain of domains) {
+      console.log(`🔍 Przetwarzam: ${domain}`);
+      try {
+        await checkAndStoreDomain(domain, now);
+      } catch (err) {
+        console.error(`❌ Błąd przetwarzania domeny ${domain}:`, err.message || err);
+      }
     }
-    if (err.response) {
-      console.error('📡 Status odpowiedzi:', err.response.status);
-      console.error('📄 Treść błędu:', err.response.data.substring(0, 200));
+
+    console.log('✅ Wszystkie domeny przetworzone. Zakończono aktualizację.');
+  } catch (err) {
+    if (err.code === 'ECONNREFUSED') {
+      console.error('❌ Błąd połączenia: Nie można połączyć się z serwerem dns.pl – czy masz dostęp do internetu?');
+    } else if (err.code === 'ETIMEDOUT') {
+      console.error('❌ Błąd: Przekroczono limit czasu połączenia z dns.pl');
+    } else if (err.response) {
+      console.error('❌ Błąd HTTP:', err.response.status, err.response.statusText);
+    } else {
+      console.error('❌ Nieznany błąd:', err.message || err);
     }
   }
 }
 
-// Uruchom natychmiast (dla testu)
+// Uruchom natychmiast (do testów)
 run();
-
-// Lub: zaplanuj codziennie o 3:00
-// import cron from 'node-cron';
-// cron.schedule('0 3 * * *', run);

@@ -3,7 +3,7 @@ import mysql from 'mysql2/promise';
 
 // Konfiguracja połączenia
 const config = {
-  host: process.env.DB_HOST,
+  host: 'sql165.lh.pl',
   user: 'serwer373887_domeny',
   password: 'yglL1<3nEb>K-=6m', // ⚠️ ZAMIEN NA Swoje!
   database: 'serwer373887_domeny',

@@ -1,0 +1,307 @@
+/* Nowoczesna lista domen – czysty CSS */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: #f5f7fb;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* Nagłówek */
+.header {
+  background: linear-gradient(135deg, #0e3f7a, #072e6c);
+  color: white;
+  text-align: center;
+  padding: 2.5rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.header p {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  margin: 0;
+  margin-top: 0.2rem;
+}
+
+.header h1 {
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(2rem, 6vw, 3.2rem);
+  font-weight: 800;
+  letter-spacing: -1px;
+  text-align: center;
+  margin-bottom: 0.6rem;
+  -webkit-text-stroke-width: 1.00px; 
+  
+
+  /* Nowoczesny gradient (biało-błękitny z lekkim blaskiem) */
+  background: linear-gradient(
+    90deg,
+    #ffffff 0%,
+    #a0d8f1 40%,
+    #7ec0ee 70%,
+    #66a3d2 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+
+  /* Efekt pulsującego blasku (delikatny glow) */
+  text-shadow: 
+    0 0 10px rgba(160, 216, 241, 0.2),
+    0 0 20px rgba(160, 216, 241, 0.1);
+
+  /* Animacja gradientu — lekki przesuwający się blask */
+  animation: shine 4s ease-in-out infinite alternate;
+
+  display: inline-block;
+  position: relative;
+}
+
+/* Animacja przesuwania gradientu */
+@keyframes shine {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Delikatny cień pod logiem dla głębi */
+.header h1::after {
+  content: "";
+  position: absolute;
+  left: 10%;
+  bottom: -6px;
+  width: 80%;
+  height: 6px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  filter: blur(2px);
+  opacity: 0.4;
+  z-index: -1;
+}
+
+/* Panel kontrolny: wyszukiwanie i filtry */
+.controls {
+  max-width: 1000px;
+  margin: 24px auto;
+  padding: 0 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+  align-items: center;
+}
+
+.search-input {
+  width: 100%;
+  max-width: 360px;
+  padding: 12px 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 16px;
+  outline: none;
+  transition: border 0.2s;
+}
+
+.search-input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.filter-btn {
+  padding: 8px 16px;
+  border: none;
+  background: #e2e8f0;
+  color: #475569;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.filter-btn:hover {
+  background: #cbd5e1;
+}
+
+.filter-btn.active {
+  background: #3b82f6;
+  color: white;
+}
+
+/* Kontener tabeli – z marginesami i przewijaniem na małych ekranach */
+.table-container {
+  max-width: 1200px;
+  margin: 0 auto 40px;
+  padding: 0 16px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Tabela – nowoczesny design z zaokrągleniami i cieniem */
+.domain-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  margin: 20px 0;
+  font-size: 14px;
+}
+
+/* Nagłówki tabeli */
+.domain-table th {
+  background: #f8fafc;
+  color: #1e293b;
+  font-weight: 600;
+  padding: 16px 12px;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid #e2e8f0;
+  text-align: center;
+}
+
+/* Komórki danych */
+.domain-table td {
+  padding: 14px 12px;
+  text-align: center;
+  border-bottom: 1px solid #f1f5f9;
+  color: #475569;
+}
+
+/* Wyrównanie lewe dla domeny */
+.domain-table td:first-child {
+  text-align: left;
+  font-family: 'Courier New', monospace;
+  font-size: 0.95rem;
+}
+
+/* Efekt hover – delikatne podświetlenie wiersza */
+.domain-table tr:hover {
+  background: #f0f9ff;
+  transition: background 0.2s ease;
+}
+
+/* Status – kolorowe tagi */
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  min-width: 90px;
+  display: inline-block;
+}
+
+.status-badge.available {
+  background: #ecfdf5;
+  color: #047857;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.status-badge.taken {
+  background: #fef2f2;
+  color: #b91c1c;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Przycisk "Sprawdź teraz" */
+.check-btn {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.check-btn:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.2);
+}
+
+.check-btn:active {
+  transform: translateY(0);
+}
+
+/* Animacja pulsowania statusu po aktualizacji */
+.status-badge.pulse {
+  animation: statusPulse 0.6s ease-out;
+  display: inline-block;
+}
+
+@keyframes statusPulse {
+  0% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.03); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* Stopka */
+.footer {
+  text-align: center;
+  padding: 20px;
+  color: #64748b;
+  font-size: 14px;
+  border-top: 1px solid #e2e8f0;
+  background: white;
+  margin-top: auto;
+}
+
+/* Ładowanie */
+.loading {
+  text-align: center;
+  padding: 60px;
+  font-size: 18px;
+  color: #64748b;
+}
+
+/* Brak danych */
+.empty {
+  text-align: center;
+  padding: 30px;
+  color: #94a3b8;
+  font-style: italic;
+}
+
+/* Responsywność – mniejsze czcionki na małych ekranach */
+@media (max-width: 768px) {
+  .header h1 {
+    font-size: 2.2rem;
+  }
+
+  .domain-table th,
+  .domain-table td {
+    padding: 12px 8px;
+    font-size: 0.85rem;
+  }
+
+  .controls {
+    gap: 12px;
+  }
+
+  .filter-btn,
+  .search-input {
+    font-size: 14px;
+    padding: 10px 14px;
+  }
+}
