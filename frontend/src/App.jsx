@@ -111,12 +111,6 @@ function App() {
         />
         <div className="filters">
           <button
-            onClick={() => setFilter('all')}
-            className={filter === 'all' ? 'filter-btn active' : 'filter-btn'}
-          >
-            Wszystkie ({domains.length})
-          </button>
-          <button
             onClick={() => setFilter('available')}
             className={filter === 'available' ? 'filter-btn active' : 'filter-btn'}
           >
@@ -136,9 +130,13 @@ function App() {
         <table className="domain-table">
           <thead>
             <tr>
-              <th>Domena</th>
+              <th className="th-domain">Domena</th>
               <th>Uwolniona</th>
-              <th>Ostatnio sprawdzana</th>
+              {filter === 'available' ? (
+              <th>Aktualizacja</th>
+                  ) : (
+                    <th>Zajęta od</th>
+                  )}
               <th>Status</th>
               <th>Akcja</th>
             </tr>
@@ -151,13 +149,18 @@ function App() {
             ) : (
               sortedDomains.map((d) => (
                 <tr key={d.id} className={d.is_available ? 'available' : 'taken'}>
-                  <td className="domain-cell">
+                  <td className="td-domain domain-cell">
                     <span className="domain-name" title={d.domain}>
                       {d.domain}
                     </span>
                   </td>
                   <td className="date-cell">{formatDate(d.first_seen)}</td>
-                  <td className="last-checked-cell">{formatDate(d.last_checked)}</td>
+                  <td className="td-last-checked last-checked-cell">
+                    {filter === 'available'
+                      ? formatDate(d.last_checked)
+                      : d.taken_date ? formatDate(d.taken_date) : '–'
+                    }
+                  </td>
                   <td className="status-cell">
                     <span
                       className={`status-badge ${d.is_available ? 'available' : 'taken'}`}
