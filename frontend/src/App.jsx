@@ -6,7 +6,6 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('available'); // 'available', 'taken', 'all'
   const [search, setSearch] = useState('');
-
   const [sortField, setSortField] = useState('first_seen'); // domyślnie sortuj po dacie
   const [sortDirection, setSortDirection] = useState('desc'); // 'desc' = najnowsze najpierw
 
@@ -54,14 +53,18 @@ function App() {
   });
 
   // Sortowanie: od najnowszych
- const sortedDomains = filteredDomains.sort((a, b) => {
-  if (sortField === 'first_seen') {
-    const dateA = new Date(a.first_seen);
-    const dateB = new Date(b.first_seen);
-    return sortDirection === 'desc' ? dateB - dateA : dateA - dateB;
+const sortedDomains = filteredDomains.sort((a, b) => {
+  // 1. Sortowanie po nazwie domeny
+  if (sortField === 'domain') {
+    const nameA = a.domain;
+    const nameB = b.domain;
+    return sortDirection === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
   }
-  // Domyślne sortowanie: najdłużej wisiące
-  return b.days_available - a.days_available;
+
+  // 2. Domyślne sortowanie: najnowsze u góry
+  const dateA = new Date(a.first_seen);
+  const dateB = new Date(b.first_seen);
+  return sortDirection === 'desc' ? dateB - dateA : dateA - dateB;
 });
 
   // Ręczne sprawdzenie domeny
@@ -137,7 +140,25 @@ function App() {
         <table className="domain-table">
           <thead>
             <tr>
-              <th className="th-domain">Domena</th>
+              <th
+                  className="sortable-header"
+                  onClick={() => {
+                    if (sortField !== 'domain') {
+                      // Pierwsze kliknięcie: A → Z
+                      setSortField('domain');
+                      setSortDirection('asc');
+                    } else if (sortDirection === 'asc') {
+                      // Drugie kliknięcie: Z → A
+                      setSortDirection('desc');
+                    } else {
+                      // Trzecie: wróć do domyślnego (najnowsze)
+                      setSortField('first_seen');
+                      setSortDirection('desc');
+                    }
+                  }}
+                >
+                  Domena {sortField === 'domain' && (sortDirection === 'asc' ? ' ↓' : ' ↑')}
+                </th>
               <th
                 className="sortable-header"
                 onClick={() => {
