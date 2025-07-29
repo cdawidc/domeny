@@ -343,3 +343,28 @@ body {
     max-width: 180px;
   }
 }
+
+.sortable-header {
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  transition: color 0.2s;
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.sortable-header:hover {
+  color: #3b82f6;
+}
+
+.sortable-header::after {
+  content: '↕️';
+  position: absolute;
+  right: 8px;
+  opacity: 0.3;
+  font-size: 0.8em;
+}
+
+.sortable-header:hover::after {
+  opacity: 0.8;
+}

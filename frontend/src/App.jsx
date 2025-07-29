@@ -7,6 +7,9 @@ function App() {
   const [filter, setFilter] = useState('available'); // 'available', 'taken', 'all'
   const [search, setSearch] = useState('');
 
+  const [sortField, setSortField] = useState('first_seen'); // domyślnie sortuj po dacie
+  const [sortDirection, setSortDirection] = useState('desc'); // 'desc' = najnowsze najpierw
+
   // Formatuje datę: 21.07.2025 14:35
   const formatDate = (dateString) => {
     try {
@@ -51,11 +54,15 @@ function App() {
   });
 
   // Sortowanie: od najnowszych
-  const sortedDomains = filteredDomains.sort((a, b) => {
+ const sortedDomains = filteredDomains.sort((a, b) => {
+  if (sortField === 'first_seen') {
     const dateA = new Date(a.first_seen);
     const dateB = new Date(b.first_seen);
-    return dateB - dateA;
-  });
+    return sortDirection === 'desc' ? dateB - dateA : dateA - dateB;
+  }
+  // Domyślne sortowanie: najdłużej wisiące
+  return b.days_available - a.days_available;
+});
 
   // Ręczne sprawdzenie domeny
   const handleCheckNow = async (domainName) => {
@@ -131,7 +138,17 @@ function App() {
           <thead>
             <tr>
               <th className="th-domain">Domena</th>
-              <th>Uwolniona</th>
+              <th
+                className="sortable-header"
+                onClick={() => {
+                  if (sortField === 'first_seen') {
+                    // Przełącz kierunek sortowania
+                    setSortDirection(sortDirection === 'desc' ? 'asc' : 'desc');
+                  }
+                }}
+              >
+                Uwolniona {sortDirection === 'desc' ? ' ↓' : ' ↑'}
+              </th>
               {filter === 'available' ? (
               <th>Aktualizacja</th>
                   ) : (
