@@ -2,13 +2,22 @@
 import pool from '../db.js';
 import { isDomainAvailable } from './dnsCheck.js';
 
-const getDateTime = () => {
+const getLocalDateTime = () => {
   const now = new Date();
-  return now.toISOString().slice(0, 19).replace('T', ' ');
+  
+  // Dodaj 2 godziny, jeśli chcesz CEST (lub użyj poniższego uniwersalnego)
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const seconds = String(now.getSeconds()).padStart(2, '0');
+  
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 };
 
 export const checkAndStoreDomain = async (domainName) => {
-  const now = getDateTime();
+  const now = getLocalDateTime();
   const domain = domainName.trim().toLowerCase();
 
   // Walidacja
